@@ -246,7 +246,7 @@ with aba4:
     prob_risco = model_risco.predict_proba(X_test)[:,1]
 
     col1, col2 = st.columns(2)
-    col1.metric("ROC-AUC Risco", round(roc_auc_score(y_test,prob_risco),3))
+    col1.metric(" Área de curva ROC-AUC Risco", round(roc_auc_score(y_test,prob_risco),3))
     col2.metric("Alunos em Risco 2024", int(df24["Risco_Defasagem"].sum()))
 
     st.subheader("Importância dos Fatores de Risco")
