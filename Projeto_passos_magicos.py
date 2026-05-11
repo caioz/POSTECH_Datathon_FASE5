@@ -92,10 +92,10 @@ with aba1:
 
     st.subheader("Indicadores Estratégicos")
 
-    col_inde_22 = [c for c in df22.columns if "INDE" in c][0]
-    col_inde_23 = [c for c in df23.columns if "INDE" in c][0]
-    col_inde_24 = [c for c in df24.columns if "INDE" in c][0]
-        
+    col1.metric("INDE Médio 2024", f"{media24:.2f}" if pd.notnull(media24) else "N/A")
+    col2.metric("Crescimento 3 anos", f"{crescimento:.1f}%" if pd.notnull(crescimento) else "N/A")
+    col3.metric("Total Alunos 2024", f"{len(df24)}")
+    
     media22 = df22[col_inde_22].mean()
     media23 = df23[col_inde_23].mean()
     media24 = df24[col_inde_24].mean()
@@ -111,9 +111,18 @@ with aba1:
     st.subheader("Evolução do INDE")
 
     fig, ax = plt.subplots()
-    ax.plot(["2022","2023","2024"], [media22, media23, media24], marker="o")
+    
+    anos = ["2022","2023","2024"]
+    valores = [media22, media23, media24]
+    
+    ax.plot(anos, valores, marker="o", linewidth=3)
     ax.set_ylim(0,10)
     ax.grid(True)
+    
+    # Adiciona rótulos
+    for i, v in enumerate(valores):
+        ax.text(i, v + 0.2, f"{v:.2f}", ha='center', fontweight='bold')
+    
     st.pyplot(fig)
 
 # ==========================================================
