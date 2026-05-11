@@ -211,7 +211,7 @@ with aba3:
     probas = clf.predict_proba(X_test)[:,1]
 
     col1, col2 = st.columns(2)
-    col1.metric("ROC-AUC", round(roc_auc_score(y_test,probas),3))
+    col1.metric("Área sob a curva ROC", round(roc_auc_score(y_test,probas),3))
     col2.metric("Total Candidatos Elite", int(y.sum()))
 
     st.write(pd.DataFrame(classification_report(y_test, clf.predict(X_test), output_dict=True)).transpose())
