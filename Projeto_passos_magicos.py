@@ -92,39 +92,27 @@ with aba1:
 
     st.subheader("Indicadores Estratégicos")
 
-    # Identifica colunas INDE
+    # ==========================================================
+    # KPIs GLOBAIS (APARECEM EM TODAS AS ABAS)
+    # ==========================================================
+    
     col_inde_22 = [c for c in df22.columns if "INDE" in c][0]
     col_inde_23 = [c for c in df23.columns if "INDE" in c][0]
     col_inde_24 = [c for c in df24.columns if "INDE" in c][0]
     
-    # Calcula médias
     media22 = df22[col_inde_22].mean()
     media23 = df23[col_inde_23].mean()
     media24 = df24[col_inde_24].mean()
     
-    # Crescimento
     crescimento = ((media24 - media22) / media22) * 100 if media22 != 0 else 0
-
-        col1.metric(
-        "INDE Médio 2024",
-        f"{media24:.2f}" if pd.notnull(media24) else "N/A"
-        )
-        
-        col2.metric(
-            "Crescimento 3 anos",
-            f"{crescimento:.1f}%" if pd.notnull(crescimento) else "N/A"
-        )
-        
-        col3.metric(
-            "Total Alunos 2024",
-            len(df24)
-        )
-
-    col1.metric("INDE Médio 2024", round(media24,2))
+    
+    col1, col2, col3 = st.columns(3)
+    
+    col1.metric("INDE Médio 2024", f"{media24:.2f}")
     col2.metric("Crescimento 3 anos", f"{crescimento:.1f}%")
     col3.metric("Total Alunos 2024", len(df24))
-
-    st.subheader("Evolução do INDE")
+    
+    st.divider()
 
     fig, ax = plt.subplots()
     
