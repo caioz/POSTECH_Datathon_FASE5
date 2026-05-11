@@ -105,20 +105,20 @@ with aba1:
     # Crescimento
     crescimento = ((media24 - media22) / media22) * 100 if media22 != 0 else 0
 
-    col1.metric(
-    "INDE Médio 2024",
-    f"{media24:.2f}" if pd.notnull(media24) else "N/A"
-    )
-    
-    col2.metric(
-        "Crescimento 3 anos",
-        f"{crescimento:.1f}%" if pd.notnull(crescimento) else "N/A"
-    )
-    
-    col3.metric(
-        "Total Alunos 2024",
-        len(df24)
-    )
+        col1.metric(
+        "INDE Médio 2024",
+        f"{media24:.2f}" if pd.notnull(media24) else "N/A"
+        )
+        
+        col2.metric(
+            "Crescimento 3 anos",
+            f"{crescimento:.1f}%" if pd.notnull(crescimento) else "N/A"
+        )
+        
+        col3.metric(
+            "Total Alunos 2024",
+            len(df24)
+        )
 
     col1.metric("INDE Médio 2024", round(media24,2))
     col2.metric("Crescimento 3 anos", f"{crescimento:.1f}%")
