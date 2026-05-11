@@ -1,5 +1,5 @@
 # ==========================================================
-# PASSOS MÁGICOS - INTELIGÊNCIA SOCIAL EXECUTIVA
+# PASSOS MÁGICOS
 # ==========================================================
 
 import streamlit as st
@@ -23,7 +23,7 @@ st.set_page_config(
 )
 
 # ==========================================================
-# ESTILO MODERNO
+# VISUAL
 # ==========================================================
 
 st.markdown("""
@@ -92,9 +92,9 @@ with aba1:
 
     st.subheader("Indicadores Estratégicos")
 
-    media22 = df22.filter(like="INDE").mean().values[0]
-    media23 = df23.filter(like="INDE").mean().values[0]
-    media24 = df24.filter(like="INDE").mean().values[0]
+    media22 = df22.filter(like="%INDE%").mean().values[0]
+    media23 = df23.filter(like="%INDE%").mean().values[0]
+    media24 = df24.filter(like="%INDE%").mean().values[0]
 
     crescimento = ((media24 - media22) / media22) * 100
 
