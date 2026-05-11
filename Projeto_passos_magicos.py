@@ -108,8 +108,8 @@ with aba1:
     
     col1, col2, col3 = st.columns(3)
     
-    col1.metric("INDE Médio 2024", f"{media24:.2f}")
-    col2.metric("Crescimento 3 anos", f"{crescimento:.1f}%")
+    col1.metric("INDE Médio 2024", f"{media24:.2f}" if pd.notnull(media24) else "Sem dados")
+    col2.metric("Crescimento 3 anos", f"{crescimento:.1f}%" if pd.notnull(crescimento) else "Sem dados")
     col3.metric("Total Alunos 2024", len(df24))
     
     st.divider()
