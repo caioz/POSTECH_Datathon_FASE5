@@ -1,5 +1,5 @@
 # ==========================================================
-# PROJETO PASSOS MÁGICOS - STREAMLIT APP
+# PASSOS MÁGICOS - INTELIGÊNCIA SOCIAL EXECUTIVA
 # ==========================================================
 
 import streamlit as st
@@ -10,30 +10,49 @@ import seaborn as sns
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.metrics import mean_absolute_error, r2_score, classification_report
+from sklearn.metrics import mean_absolute_error, r2_score, classification_report, roc_auc_score
 
+# ==========================================================
+# CONFIGURAÇÃO DA PÁGINA
+# ==========================================================
 
-# ==============================
-# CONFIGURAÇÕES
-# ==============================
+st.set_page_config(
+    page_title="Passos Mágicos - Inteligência Social",
+    layout="wide",
+    page_icon="📊"
+)
+
+# ==========================================================
+# ESTILO MODERNO
+# ==========================================================
+
+st.markdown("""
+    <style>
+    .main {background-color: #f8f9fa;}
+    .stMetric {background-color: white; padding: 15px; border-radius: 10px;}
+    </style>
+""", unsafe_allow_html=True)
+
+# ==========================================================
+# CONFIGURAÇÕES GLOBAIS
+# ==========================================================
 
 FILE_PATH = "https://raw.githubusercontent.com/caioz/POSTECH_Datathon_FASE5/main/BASE%20DE%20DADOS%20PEDE%202024%20-%20DATATHON.xlsx"
 INDICADORES = ['IAA', 'IEG', 'IPS', 'IDA', 'IPV', 'IAN']
 
-
-# ==============================
-# CACHE DE DADOS (IMPORTANTÍSSIMO)
-# ==============================
+# ==========================================================
+# CACHE
+# ==========================================================
 
 @st.cache_data
 def carregar_dados():
-    df_22 = pd.read_excel(FILE_PATH, sheet_name='PEDE2022')
-    df_23 = pd.read_excel(FILE_PATH, sheet_name='PEDE2023')
-    df_24 = pd.read_excel(FILE_PATH, sheet_name='PEDE2024')
-    return df_22, df_23, df_24
+    df22 = pd.read_excel(FILE_PATH, sheet_name='PEDE2022')
+    df23 = pd.read_excel(FILE_PATH, sheet_name='PEDE2023')
+    df24 = pd.read_excel(FILE_PATH, sheet_name='PEDE2024')
+    return df22, df23, df24
 
 
-def converter_indicadores_numerico(df):
+def converter_numerico(df):
     df = df.copy()
     for col in df.columns:
         if any(ind in col for ind in INDICADORES) or "INDE" in col:
@@ -41,88 +60,88 @@ def converter_indicadores_numerico(df):
     return df
 
 
-# ==============================
-# INTERFACE
-# ==============================
-
-st.set_page_config(layout="wide")
-st.title("📊 Projeto Passos Mágicos - Inteligência Social")
-
-df_22, df_23, df_24 = carregar_dados()
-
-df_22 = converter_indicadores_numerico(df_22)
-df_23 = converter_indicadores_numerico(df_23)
-df_24 = converter_indicadores_numerico(df_24)
-
-
-menu = st.sidebar.selectbox(
-    "Selecione a análise:",
-    [
-        "Diagnóstico Institucional",
-        "Previsão INDE 2024",
-        "Classificador de Bolsa"
-    ]
-)
-
 # ==========================================================
-# 1️⃣ DIAGNÓSTICO
+# CARREGAMENTO
 # ==========================================================
 
-if menu == "Diagnóstico Institucional":
+df22, df23, df24 = carregar_dados()
 
-    st.subheader("Evolução do INDE Médio")
+df22 = converter_numerico(df22)
+df23 = converter_numerico(df23)
+df24 = converter_numerico(df24)
 
-    media_22 = df_22.filter(like="INDE").mean().values[0]
-    media_23 = df_23.filter(like="INDE").mean().values[0]
-    media_24 = df_24.filter(like="INDE").mean().values[0]
+st.title("📊 Dashboard Executivo - Inteligência Social")
+st.caption("Sistema Estratégico de Apoio à Tomada de Decisão")
+
+# ==========================================================
+# ABAS
+# ==========================================================
+
+aba1, aba2, aba3, aba4 = st.tabs([
+    "📊 Visão Estratégica",
+    "🤖 Previsão INDE",
+    "🎓 Recomendação de Bolsa",
+    "⚠️ Risco de Defasagem"
+])
+
+# ==========================================================
+# 1️⃣ VISÃO ESTRATÉGICA
+# ==========================================================
+
+with aba1:
+
+    st.subheader("Indicadores Estratégicos")
+
+    media22 = df22.filter(like="INDE").mean().values[0]
+    media23 = df23.filter(like="INDE").mean().values[0]
+    media24 = df24.filter(like="INDE").mean().values[0]
+
+    crescimento = ((media24 - media22) / media22) * 100
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric("INDE Médio 2024", round(media24,2))
+    col2.metric("Crescimento 3 anos", f"{crescimento:.1f}%")
+    col3.metric("Total Alunos 2024", len(df24))
+
+    st.subheader("Evolução do INDE")
 
     fig, ax = plt.subplots()
-    ax.plot(["2022","2023","2024"],
-            [media_22, media_23, media_24],
-            marker="o")
-
+    ax.plot(["2022","2023","2024"], [media22, media23, media24], marker="o")
     ax.set_ylim(0,10)
+    ax.grid(True)
     st.pyplot(fig)
-
-    st.metric("INDE Médio 2024", round(media_24,2))
-
 
 # ==========================================================
 # 2️⃣ PREVISÃO INDE
 # ==========================================================
 
-elif menu == "Previsão INDE 2024":
+with aba2:
 
     st.subheader("Modelo de Previsão de Desempenho")
 
-    features_23 = ['RA'] + [c for c in df_23.columns if any(ind == c[:3] for ind in INDICADORES)]
+    features = ['RA'] + [c for c in df23.columns if any(ind == c[:3] for ind in INDICADORES)]
 
     df_merge = pd.merge(
-        df_23[features_23],
-        df_24[['RA','INDE 2024']],
+        df23[features],
+        df24[['RA','INDE 2024']],
         on="RA"
     ).dropna()
 
     X = df_merge.drop(columns=["RA","INDE 2024"])
     y = df_merge["INDE 2024"]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2,random_state=42)
 
     model = RandomForestRegressor(random_state=42)
     model.fit(X_train, y_train)
 
     preds = model.predict(X_test)
 
-    r2 = r2_score(y_test, preds)
-    mae = mean_absolute_error(y_test, preds)
-
     col1, col2 = st.columns(2)
-    col1.metric("R²", round(r2,3))
-    col2.metric("MAE", round(mae,3))
+    col1.metric("R²", round(r2_score(y_test,preds),3))
+    col2.metric("MAE", round(mean_absolute_error(y_test,preds),3))
 
-    # Feature Importance
     st.subheader("Importância dos Indicadores")
 
     importances = pd.Series(model.feature_importances_, index=X.columns)
@@ -130,38 +149,78 @@ elif menu == "Previsão INDE 2024":
     importances.sort_values().plot(kind="barh", ax=ax)
     st.pyplot(fig)
 
-
 # ==========================================================
-# 3️⃣ CLASSIFICADOR DE BOLSA
+# 3️⃣ RECOMENDAÇÃO DE BOLSA
 # ==========================================================
 
-elif menu == "Classificador de Bolsa":
+with aba3:
 
-    st.subheader("Modelo de Recomendação de Bolsa")
+    st.subheader("Modelo de Recomendação Estratégica")
 
-    col_inde = [c for c in df_23.columns if "INDE" in c][0]
-    col_pedra = [c for c in df_23.columns if "Pedra" in c][0]
+    col_inde = [c for c in df23.columns if "INDE" in c][0]
+    col_pedra = [c for c in df23.columns if "Pedra" in c][0]
 
-    df_23["Candidato_Bolsa"] = np.where(
-        (df_23[col_inde] >= 8.5) &
-        (df_23[col_pedra].isin(["Ametista","Topázio"])),
-        1, 0
+    df23["Candidato_Bolsa"] = np.where(
+        (df23[col_inde] >= 8.5) &
+        (df23[col_pedra].isin(["Ametista","Topázio"])),
+        1,0
     )
 
-    cols_X = [c for c in df_23.columns if any(ind == c[:3] for ind in INDICADORES)]
-    df_model = df_23.dropna(subset=cols_X + ["Candidato_Bolsa"])
+    cols_X = [c for c in df23.columns if any(ind == c[:3] for ind in INDICADORES)]
+    df_model = df23.dropna(subset=cols_X + ["Candidato_Bolsa"])
 
     X = df_model[cols_X]
     y = df_model["Candidato_Bolsa"]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+
+    clf = RandomForestClassifier(class_weight="balanced",random_state=42)
+    clf.fit(X_train,y_train)
+
+    probas = clf.predict_proba(X_test)[:,1]
+
+    col1, col2 = st.columns(2)
+    col1.metric("ROC-AUC", round(roc_auc_score(y_test,probas),3))
+    col2.metric("Total Candidatos Elite", int(y.sum()))
+
+    st.write(pd.DataFrame(classification_report(y_test, clf.predict(X_test), output_dict=True)).transpose())
+
+# ==========================================================
+# 4️⃣ RISCO DE DEFASAGEM
+# ==========================================================
+
+with aba4:
+
+    st.subheader("Modelo de Risco de Defasagem")
+
+    df24["Risco_Defasagem"] = np.where(
+        df24["IAN"] < 10,
+        1,0
     )
 
-    clf = RandomForestClassifier(class_weight="balanced", random_state=42)
-    clf.fit(X_train, y_train)
+    df_risco = pd.merge(
+        df23[['RA','IEG','IDA','IPS','IPV']],
+        df24[['RA','Risco_Defasagem']],
+        on="RA"
+    ).dropna()
 
-    report = classification_report(y_test, clf.predict(X_test), output_dict=True)
+    X = df_risco[['IEG','IDA','IPS','IPV']]
+    y = df_risco['Risco_Defasagem']
 
-    st.write("### Métricas")
-    st.write(pd.DataFrame(report).transpose())
+    X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+
+    model_risco = RandomForestClassifier(class_weight="balanced",random_state=42)
+    model_risco.fit(X_train,y_train)
+
+    prob_risco = model_risco.predict_proba(X_test)[:,1]
+
+    col1, col2 = st.columns(2)
+    col1.metric("ROC-AUC Risco", round(roc_auc_score(y_test,prob_risco),3))
+    col2.metric("Alunos em Risco 2024", int(df24["Risco_Defasagem"].sum()))
+
+    st.subheader("Importância dos Fatores de Risco")
+
+    importances = pd.Series(model_risco.feature_importances_, index=X.columns)
+    fig, ax = plt.subplots()
+    importances.sort_values().plot(kind="barh", ax=ax)
+    st.pyplot(fig)
