@@ -162,7 +162,14 @@ with aba2:
 
     importances = pd.Series(model.feature_importances_, index=X.columns)
     fig, ax = plt.subplots()
-    importances.sort_values().plot(kind="barh", ax=ax)
+    importances_sorted = importances.sort_values()
+
+    importances_sorted.plot(kind="barh", ax=ax)
+    
+    for i, v in enumerate(importances_sorted):
+        ax.text(v + 0.001, i, f"{v:.3f}", va='center')
+    
+    st.pyplot(fig)
     st.pyplot(fig)
 
 # ==========================================================
@@ -236,7 +243,12 @@ with aba4:
 
     st.subheader("Importância dos Fatores de Risco")
 
-    importances = pd.Series(model_risco.feature_importances_, index=X.columns)
+    importances_sorted = importances.sort_values()
+    
     fig, ax = plt.subplots()
-    importances.sort_values().plot(kind="barh", ax=ax)
+    importances_sorted.plot(kind="barh", ax=ax)
+    
+    for i, v in enumerate(importances_sorted):
+        ax.text(v + 0.001, i, f"{v:.3f}", va='center')
+    
     st.pyplot(fig)
