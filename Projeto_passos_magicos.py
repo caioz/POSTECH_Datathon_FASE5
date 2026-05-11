@@ -171,8 +171,7 @@ with aba2:
         ax.text(v + 0.001, i, f"{v:.3f}", va='center')
     
     st.pyplot(fig)
-    st.pyplot(fig)
-
+   
 # ==========================================================
 # 3️⃣ RECOMENDAÇÃO DE BOLSA
 # ==========================================================
@@ -244,6 +243,7 @@ with aba4:
 
     st.subheader("Importância dos Fatores de Risco")
 
+    importances = pd.Series(model_risco.feature_importances_, index=X.columns)
     importances_sorted = importances.sort_values()
     
     fig, ax = plt.subplots()
