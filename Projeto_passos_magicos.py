@@ -28,8 +28,16 @@ st.set_page_config(
 
 st.markdown("""
     <style>
-    .main {background-color: #f8f9fa;}
-    .stMetric {background-color: white; padding: 15px; border-radius: 10px;}
+    div[data-testid="metric-container"] {
+        background-color: #111827;
+        border: 1px solid #1f2937;
+        padding: 20px;
+        border-radius: 12px;
+        color: white;
+    }
+    div[data-testid="metric-container"] > label {
+        color: #9ca3af;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -108,7 +116,7 @@ with aba1:
     
     col1, col2, col3 = st.columns(3)
     
-    col1.metric("INDE Médio 2024", f"{media24:.2f}" if pd.notnull(media24) else "Sem dados")
+    col1.metric("INDE Médio 2024", f"{media24:.2f}", delta=f"{media24-media23:.2f}")
     col2.metric("Crescimento 3 anos", f"{crescimento:.1f}%" if pd.notnull(crescimento) else "Sem dados")
     col3.metric("Total Alunos 2024", len(df24))
     
