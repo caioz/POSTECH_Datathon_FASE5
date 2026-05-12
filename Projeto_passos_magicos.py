@@ -78,7 +78,7 @@ df22 = converter_numerico(df22)
 df23 = converter_numerico(df23)
 df24 = converter_numerico(df24)
 
-st.title("📊 Dashboard Executivo - Inteligência Social")
+st.title("📊 Dashboard Executivo")
 st.caption("Sistema Estratégico de Apoio à Tomada de Decisão")
 
 # ==========================================================
