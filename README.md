@@ -69,7 +69,7 @@ Abaixo está o resumo técnico do projeto:
 
 | Tipo | Link |
 |------|------|
-| Vídeo Explicativo (Drive) | [] |
+| Vídeo Explicativo (Drive) | https://drive.google.com/file/d/1QPqxohqEKfOUcthC6Vn_q_XOSX8qUEak/view?usp=drive_link |
 | Aplicação (Streamlit) | https://postechdatathonfase5-xvgceq3nfhrwgif6vnx8yt.streamlit.app/ |
 | Apresentação Executiva | https://docs.google.com/presentation/d/15uhEj9C3Je1d56cv3DoTT3RQf2mATf7c0G1HCNAFjgI/edit?usp=sharing |
 ## 🕵️‍♀️ Alunos Responsáveis
